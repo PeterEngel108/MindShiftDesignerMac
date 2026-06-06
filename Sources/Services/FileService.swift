@@ -12,10 +12,7 @@ struct FileService {
     // ── Import ────────────────────────────────────────────────────────────────
 
     static func importFile(from url: URL, into data: AppData) throws {
-        guard let archive = Archive(url: url, accessMode: .read) else {
-            throw NSError(domain: "FileService", code: -1,
-                          userInfo: [NSLocalizedDescriptionKey: "Datei konnte nicht geöffnet werden."])
-        }
+        let archive = try Archive(url: url, accessMode: .read)
         guard let entry = archive["data.json"] else {
             throw NSError(domain: "FileService", code: -1,
                           userInfo: [NSLocalizedDescriptionKey: "Keine data.json in der Datei gefunden."])
@@ -169,17 +166,14 @@ struct FileService {
         if FileManager.default.fileExists(atPath: url.path) {
             try FileManager.default.removeItem(at: url)
         }
-        guard let archive = Archive(url: url, accessMode: .create) else {
-            throw NSError(domain: "FileService", code: -1,
-                          userInfo: [NSLocalizedDescriptionKey: "ZIP-Datei konnte nicht erstellt werden."])
-        }
+        let archive = try Archive(url: url, accessMode: .create)
         try archive.addEntry(with: "data.json", type: .file,
-                             uncompressedSize: Int64(jsonData.count)) { position, size in
+                             uncompressedSize: UInt32(jsonData.count)) { position, size in
             jsonData.subdata(in: position..<(position + size))
         }
         for (filename, data) in audioFiles {
             try archive.addEntry(with: "audio/\(filename)", type: .file,
-                                 uncompressedSize: Int64(data.count)) { position, size in
+                                 uncompressedSize: UInt32(data.count)) { position, size in
                 data.subdata(in: position..<(position + size))
             }
         }
