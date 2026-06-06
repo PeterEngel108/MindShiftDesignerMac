@@ -178,7 +178,8 @@ struct WizardView: View {
             Text("Diese Namen können Sie jederzeit ändern.").font(.system(size: 12)).foregroundColor(Color(hex: "#6B7280"))
 
             VStack(spacing: 10) {
-                ForEach($vm.sections) { $section in
+                ForEach(vm.sections) { section in
+                    @Bindable var section = section
                     HStack(spacing: 8) {
                         Text("📂").font(.system(size: 18))
                         TextField("Abschnittsname", text: $section.title)
@@ -237,7 +238,8 @@ struct WizardView: View {
     }
 
     private func sectionBlock(_ section: SectionEntry) -> some View {
-        VStack(alignment: .leading, spacing: 14) {
+        @Bindable var section = section
+        return VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 8) {
                 Text("📂").font(.system(size: 18))
                 Text(section.title).font(.system(size: 16, weight: .bold)).foregroundColor(Color(hex: "#1A1A2E"))
@@ -281,7 +283,8 @@ struct WizardView: View {
     }
 
     private func blockCard(_ block: BlockEntry) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
+        @Bindable var block = block
+        return VStack(alignment: .leading, spacing: 10) {
             HStack {
                 Text("📦").font(.system(size: 16))
                 Text(block.title).font(.system(size: 14, weight: .semibold)).foregroundColor(Color(hex: "#1A1A2E"))
